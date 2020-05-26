@@ -1,0 +1,19 @@
+{% extends "masterpage.html" %}
+{% block title %}Modelo{% endblock %}
+
+{% block content %}
+    <h1>Usuários</h1>
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Email</th>
+    </tr>    
+    {% for item in values %}
+        <tr>
+            <td>{{item.name}}</td>
+            <td>{{item.email}}</td>
+        </tr>        
+    {% endfor %}
+</table>
+
+{% endblock %}

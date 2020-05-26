@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)https://www.w3schools.com/w3css/tryw3css_templates_start_page.htm# -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>{% block title %} {% endblock %}</title>
+
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+    
+    
+<style type="text/css">
+        
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+#myList{     
+    width: 300px
+    }
+
+#myTable th{
+    color: #738493;
+    border-bottom: 1px solid black;
+    }
+#Avaliar{
+    display:none;
+    }
+#porcentagem{
+    width: 140px;
+}
+#delete a{
+    cursor: pointer;
+}    
+
+#wait{
+    display: none
+    } 
+#DropdownAssets{
+    width: 100px;
+    height: 25px;        
+}
+header.w3-red, div.w3-red{
+    background-color: #214C61!important;
+}
+.AvaliarOpt{
+    display: none;
+}
+#Resultado{
+    display: none;
+}
+#Resultado, #ResultadoOpt{
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    margin-top: 15px
+}
+img{
+    width: 100%!important;
+}
+    
+</style>
+
+    <script type="application/javascript">   
+        
+        var arrValor = [];
+        
+        function AddAsset() {    
+            
+            if(document.getElementById("porcentagem").value.length < 1){
+                Swal.fire("Preencha porcentagem!");                
+                return false;
+                ;
+            }
+            else if (document.getElementById("porcentagem").value > 100) {                
+                Swal.fire("Porcentagem não pode ser maior que 100");
+                return false;
+            }
+            
+            var e = document.getElementById("DropdownAssets");
+            var strUser = e.options[e.selectedIndex].value;
+                        
+            
+            t = document.getElementById("myTable")
+            if(t == null){                
+                linha = 0
+                var x = document.createElement("TABLE");
+                x.setAttribute("id", "myTable");
+                document.getElementById("myList").appendChild(x);                
+                //class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white"
+                
+                var y = document.createElement("TH");
+                y.setAttribute("id", "header");
+                document.getElementById("myTable").appendChild(y);                                
+                
+                var z = document.createElement("TD");
+                var t = document.createTextNode("ATIVO");
+                z.appendChild(t);
+                document.getElementById("header").appendChild(z);
+                
+                var z = document.createElement("TD");
+                var t = document.createTextNode("PORCENTAGEM");
+                z.appendChild(t);
+                document.getElementById("header").appendChild(z);
+                                
+            }
+            else{                
+                linha++;
+            }
+            
+            // XXX Validar se ativo já existe
+            
+            var total = 0 // Variável auxiliar
+            var table = document.getElementById('myTable'),
+            rows = table.rows, rowcount = rows.length, r,
+            cells, cellcount, c, cell;
+            for( r=0; r<rowcount; r++) {
+                cells = rows[r].cells;
+                cellcount = cells.length;
+                var valor = '';
+                for( c=0; c<cellcount; c++) {                                        
+                    
+                    cell = cells[c];
+                    
+                    if(cell.classList.contains("Asset")){                        
+                        var asset = cell.innerHTML;
+                        if (asset === strUser){                            
+                            Swal.fire("Esse ativo já está cadastrado!");
+                            return false
+                        }
+                    }                                                                                                                                         
+                }                                
+            }
+            
+            // FIM XXX Validar se ativo já existe
+            
+            
+            idtr = "myTr".concat(linha.toString());
+          var y = document.createElement("TR");
+          y.setAttribute("id", idtr);
+          document.getElementById("myTable").appendChild(y);
+
+            var z = document.createElement("TD");
+            var t = document.createTextNode(strUser);
+            z.appendChild(t);
+            document.getElementById(idtr).appendChild(z);
+            z.classList.add("Asset");                        
+            
+            var z = document.createElement("TD");
+            var t = document.createTextNode(document.getElementById("porcentagem").value);
+            z.appendChild(t);
+            document.getElementById(idtr).appendChild(z);
+            z.classList.add("Porc");
+                        
+            var z = document.createElement("TD");        
+            document.getElementById(idtr).appendChild(z);                        
+                       
+            z.innerHTML += "<a onclick='DeleteRow(this)' id='Delete'><img style='width:25px' src='../static/images/delete.png'/></a>"
+            
+            document.getElementById("Avaliar").style.display = "block";
+        
+        }
+        function DeleteRow(btn){            
+            var row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+        function Avaliar(){                                                
+            
+            // Limpar div resultados            
+            document.getElementById('Resultado').innerHTML = "";
+            
+            tdsValores = document.getElementsByClassName("Porc");                        
+
+            total = 0 // Variável auxiliar
+
+            // Itera sobre a lista de elementos tds (tdsValores)
+            for (var i = 0; i < tdsValores.length; i++) {
+                
+                valor = parseFloat(tdsValores[i].textContent)                                
+
+                // a cada iteração total vai receber o valor dela mesma
+                // mais o valor atual da iteração
+                total = total + valor // ou total += valor
+            }                                                        
+            
+            if(total != 100){                
+                Swal.fire("O total das porcentagem tem que ser igual a 100!");
+            }
+            else{
+                EnviarAtivos()
+            }
+
+        }
+        function EnviarAtivos(){            
+            arrValor = []
+            Swal.fire(
+              'Estamos avaliando!',
+              'Clique no botão OK!',
+              'success'
+            )
+                                   
+            var total = 0 // Variável auxiliar
+            var table = document.getElementById('myTable'),
+            rows = table.rows, rowcount = rows.length, r,
+            cells, cellcount, c, cell;
+            for( r=0; r<rowcount; r++) {
+                cells = rows[r].cells;
+                cellcount = cells.length;
+                var valor = '';
+                for( c=0; c<cellcount; c++) {                                        
+                    
+                    cell = cells[c];
+                    
+                    if(cell.classList.contains("Asset")){
+                        var asset = cell.innerHTML;
+                    }
+                    
+                    if(cell.classList.contains("Porc")){
+                        var porc = parseFloat(cell.innerHTML) / 100;                        
+                    }                                        
+                                                                        
+                }                
+                arrValor.push([asset, porc])
+            }     
+            
+            $(document).ajaxStart(function(){
+                $("#wait").css("display", "block");
+            });
+            $(document).ajaxComplete(function(){
+                $("#wait").css("display", "none");
+            });
+            // POST
+            $.ajax({
+                url: "/ConsultarAtivos",
+                type: "POST",
+                data: JSON.stringify({ 'data': arrValor }),
+                contentType: "application/json; charset=utf-8",
+                success: function(dat) {console.log(dat);$('#Resultado').append(dat);$('.InputValor').append("<div><label>Digite o montante a ser investido: </label><input class='Valor' type='number' placeholder='Valor em R$' /><button class='w3-button w3-black w3-padding-small w3-small' onclick='AvaliarOpt()'>Otimizar</button></div>")}
+            }); 
+            $("#Resultado").css("display", "block");
+            $(".AvaliarOpt").css("display", "block");            
+            
+        }
+        function AvaliarOpt(){    
+            
+            //var valor = $(".Valor");
+            var valor = $(".Valor").val();
+
+            if(valor == ""){
+                Swal.fire("Preencha o valor!");                
+                return false;
+                ;
+            }            
+            valor = parseInt(valor)                                                           
+            if(valor < 0){
+                Swal.fire("Valor não pode ser menor que zero!");  
+                return false;
+            }   
+                        
+            
+            // POST
+            $.ajax({
+                url: "/Otimizacao",
+                type: "POST",
+                data: JSON.stringify({ 'data': arrValor, 'valor': valor }),
+                contentType: "application/json; charset=utf-8",
+                success: function(dat) {$('#ResultadoOpt').append(dat);$('#ResultadoOpt').append("<p><strong>Atenção: </strong> Essa simulação não é uma recomendação de investimento, cabendo a cada pessoa discernir qual a melhor forma de alocar seu patrimônio. Para saber mais sobre os calculos utilizados <a href='/sobre'>clique aqui</a>.</p><p>Em nosso exemplo, consideramos um portfólio com ações da B3 e otimizamos o portfólio, ou seja, calculamos a quantidade de cada ação que precisamos manter em nosso portfólio para maximizar o retorno esperado para um determinado nível de risco de mercado (desvio padrão de retornos do portfólio).</p>")}
+            });
+            
+        }
+        function somenteNumeros(e) {
+            var charCode = e.charCode ? e.charCode : e.keyCode;
+            // charCode 8 = backspace   
+            // charCode 9 = tab
+            if (charCode != 8 && charCode != 9) {
+                // charCode 48 equivale a 0   
+                // charCode 57 equivale a 9
+                if (charCode < 48 || charCode > 57) {
+                    return false;
+                }
+            }
+        }        
+                
+    </script>
+    
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="/sobre" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Sobre</a>    
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="/sobre" class="w3-bar-item w3-button w3-padding-large">Sobre</a>    
+  </div>
+</div> 
+
+<!-- Second Grid -->
+<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+    <div class="w3-content">                 
+                
+        {% block content %} {% endblock %}
+        
+  </div>
+</div>
+
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">In other words, investors hedge one investment by making another.</h1>
+</div>
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-64 w3-center w3-opacity">  
+  <div class="w3-xlarge w3-padding-32">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+ </div>
+ <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+</footer>
+
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+
+</body></html>
